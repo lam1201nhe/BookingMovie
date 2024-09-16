@@ -1,0 +1,63 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;1,200;1,400;1,500&display=swap");
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
+  cursor: pointer;
+}
+
+body {
+  width: 100%;
+  height: 100vh;
+  backdrop-filter: blur(2px);
+  background-image: url("../images/background-login.jpeg");
+  background-size: 100% 100vh;
+}
+
+.container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+/* Table Login Information */
+.form-content {
+  width: 50%;
+  height: auto;
+  border-radius: 10%;
+  border: 1px solid black;
+  /* background: linear-gradient(
+    to bottom,
+    rgba(255, 166, 0, 0.896),
+    rgb(3, 161, 3, 0.64)
+  ); */
+  box-shadow: 0 3px 10px black;
+  background: white;
+}
+
+/* Cover of login information */
+.form-content-cover {
+  width: 90%;
+  margin: 30px auto;
+  
+}
+
+.nav-link {
+    color: #e4a11b !important;
+}
+
+a {
+    color: #e4a11b !important;
+}
+
+.form-check-input:checked {
+    background-color: #e4a11b !important;
+}
+
+.btn-sign-in{
+  background-color: green !important;
+  color: white !important;
+}

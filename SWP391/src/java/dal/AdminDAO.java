@@ -5,7 +5,7 @@ import database.DBContext;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
-import model.MenuDaily;
+import model.MenuDaily2;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -23,9 +23,9 @@ public class HomeDAO extends DBContext {
     /**
      * Lấy dữ liệu thức ăn từ bảng database menudaily
      */
-    public List<MenuDaily> getFoodMenu() {
+    public List<MenuDaily2> getFoodMenu() {
         Connection con = DBContext.getConnection();
-        List<MenuDaily> list = new ArrayList<>();
+        List<MenuDaily2> list = new ArrayList<>();
         //String sql="select * from Categories";
         String sql = "select food.id, "
                 + "food.name_food, "
@@ -42,7 +42,7 @@ public class HomeDAO extends DBContext {
             PreparedStatement st = con.prepareStatement(sql);
             ResultSet rs = st.executeQuery();
             while (rs.next()) {
-                list.add(new MenuDaily(
+                list.add(new MenuDaily2(
                         rs.getInt("id"),
                         rs.getString("name_food"),
                         rs.getString("describe_food"),
@@ -62,21 +62,21 @@ public class HomeDAO extends DBContext {
     /**
      * Lấy danh sách dữ liệu thức ăn có giảm giá
      */
-    public List<MenuDaily> getFoodSale(List<MenuDaily> foodmenu) {
+    public List<MenuDaily2> getFoodSale(List<MenuDaily2> foodmenu) {
 
-        ArrayList<MenuDaily> foodsale = new ArrayList<MenuDaily>();
+        ArrayList<MenuDaily2> foodsale = new ArrayList<MenuDaily2>();
 
         for (int i = 0; i < foodmenu.size(); i++) {
             if (foodmenu.get(i).getDiscout() < 1) {
-                foodsale.add(new MenuDaily(foodmenu.get(i).getId(),
+                foodsale.add(new MenuDaily2(foodmenu.get(i).getId(),
                         foodmenu.get(i).getName_food(), foodmenu.get(i).getImg(),
                         foodmenu.get(i).getDiscout()));
             }
         }
 
-        Collections.sort(foodsale, new Comparator<MenuDaily>() {
+        Collections.sort(foodsale, new Comparator<MenuDaily2>() {
             @Override
-            public int compare(MenuDaily o1, MenuDaily o2) {
+            public int compare(MenuDaily2 o1, MenuDaily2 o2) {
                 return Float.compare(o1.getDiscout(), o2.getDiscout());
             }
         });
@@ -86,23 +86,23 @@ public class HomeDAO extends DBContext {
     /**
      * Lấy danh sách dữ liệu món có giá rẻ so với mặt bằng chung món ở quán
      */
-    public List<MenuDaily> getFoodCheap(List<MenuDaily> foodmenu) {
+    public List<MenuDaily2> getFoodCheap(List<MenuDaily2> foodmenu) {
 
         int priceneeded = getPriceNeeded(foodmenu);
 
-        ArrayList<MenuDaily> foodcheap = new ArrayList<MenuDaily>();
+        ArrayList<MenuDaily2> foodcheap = new ArrayList<MenuDaily2>();
 
         for (int i = 0; i < foodmenu.size(); i++) {
             if (foodmenu.get(i).getPrice_final() <= priceneeded) {
-                foodcheap.add(new MenuDaily(foodmenu.get(i).getId(),
+                foodcheap.add(new MenuDaily2(foodmenu.get(i).getId(),
                         foodmenu.get(i).getName_food(), foodmenu.get(i).getImg(),
                         foodmenu.get(i).getPrice_final()));
             }
         }
 
-        Collections.sort(foodcheap, new Comparator<MenuDaily>() {
+        Collections.sort(foodcheap, new Comparator<MenuDaily2>() {
             @Override
-            public int compare(MenuDaily o1, MenuDaily o2) {
+            public int compare(MenuDaily2 o1, MenuDaily2 o2) {
                 return o1.getPrice_final() - o2.getPrice_final();
             }
         });
@@ -112,7 +112,7 @@ public class HomeDAO extends DBContext {
     /**
      * Lấy giá trị giá rẻ bằng trung bình cộng của một nửa của tất cả món khác
      */
-    public int getPriceNeeded(List<MenuDaily> foodmenu) {
+    public int getPriceNeeded(List<MenuDaily2> foodmenu) {
         float count = 0;
         for (int i = 0; i < foodmenu.size(); i++) {
             count += (float) foodmenu.get(i).getPrice_final();
@@ -141,21 +141,21 @@ public class HomeDAO extends DBContext {
     /**
      * Lấy danh sách món ăn được chỉ định theo tên
      */
-    public List<MenuDaily> getSearch(List<MenuDaily> foodmenu, String s) {
+    public List<MenuDaily2> getSearch(List<MenuDaily2> foodmenu, String s) {
 
-        ArrayList<MenuDaily> foodsearch = new ArrayList<MenuDaily>();
+        ArrayList<MenuDaily2> foodsearch = new ArrayList<MenuDaily2>();
 
         for (int i = 0; i < foodmenu.size(); i++) {
             if (foodmenu.get(i).getName_food().toLowerCase().contains(s.toLowerCase())) {
-                foodsearch.add(new MenuDaily(foodmenu.get(i).getId(),
+                foodsearch.add(new MenuDaily2(foodmenu.get(i).getId(),
                         foodmenu.get(i).getName_food(), foodmenu.get(i).getImg(),
                         foodmenu.get(i).getDiscout()));
             }
         }
 
-        Collections.sort(foodsearch, new Comparator<MenuDaily>() {
+        Collections.sort(foodsearch, new Comparator<MenuDaily2>() {
             @Override
-            public int compare(MenuDaily o1, MenuDaily o2) {
+            public int compare(MenuDaily2 o1, MenuDaily2 o2) {
                 //return o1.get - o2.getPrice_final();
                 return o1.getName_food().toLowerCase().compareTo(o2.getName_food().toLowerCase());
             }
@@ -194,20 +194,20 @@ public class HomeDAO extends DBContext {
     /**
      * In ra màn hình theo kiểu phân trang hàng dọc
      */
-    public List<MenuDaily> setDisplay(List<MenuDaily> foodmenu, int a, int b) {
+    public List<MenuDaily2> setDisplay(List<MenuDaily2> foodmenu, int a, int b) {
         a = ((a * 3));
 
-        ArrayList<MenuDaily> displayfood = new ArrayList<MenuDaily>();
+        ArrayList<MenuDaily2> displayfood = new ArrayList<MenuDaily2>();
 
         if (b == 1) {
             if (a < foodmenu.size()) {
                 for (int i = 0; i < a; i++) {
                     float format = ((1 - foodmenu.get(i).getDiscout()) * 100);
                     int discout = (int) format;
-                    displayfood.add(new MenuDaily(foodmenu.get(i).getId(),
+                    displayfood.add(new MenuDaily2(foodmenu.get(i).getId(),
                             foodmenu.get(i).getName_food(), foodmenu.get(i).getImg(), discout));
 
-//                    displayfood.add(new MenuDaily(foodmenu.get(i).getId(),
+//                    displayfood.add(new MenuDaily2(foodmenu.get(i).getId(),
 //                            foodmenu.get(i).getName_food(), foodmenu.get(i).getImg(),
 //                            foodmenu.get(i).getDiscout()));
                     //System.out.println(foodmenu.get(i).getName_food()+ foodmenu.get(i).getPrice_final());
@@ -217,7 +217,7 @@ public class HomeDAO extends DBContext {
                 for (int i = 0; i < a; i++) {
                     float format = ((1 - foodmenu.get(i).getDiscout()) * 100);
                     int discout = (int) format;
-                    displayfood.add(new MenuDaily(foodmenu.get(i).getId(),
+                    displayfood.add(new MenuDaily2(foodmenu.get(i).getId(),
                             foodmenu.get(i).getName_food(), foodmenu.get(i).getImg(), discout));
                     //System.out.println(foodmenu.get(i).getName_food()+ foodmenu.get(i).getPrice_final());
                 }
@@ -226,7 +226,7 @@ public class HomeDAO extends DBContext {
             if (a < foodmenu.size()) {
                 for (int i = 0; i < a; i++) {
                     System.out.println(foodmenu.get(i).getName_food());
-                    displayfood.add(new MenuDaily(foodmenu.get(i).getId(),
+                    displayfood.add(new MenuDaily2(foodmenu.get(i).getId(),
                             foodmenu.get(i).getName_food(), foodmenu.get(i).getImg(),
                             foodmenu.get(i).getPrice_final()));
                 }
@@ -235,7 +235,7 @@ public class HomeDAO extends DBContext {
                 a = foodmenu.size();
                 for (int i = 0; i < a; i++) {
                     System.out.println(foodmenu.get(i).getName_food());
-                    displayfood.add(new MenuDaily(foodmenu.get(i).getId(),
+                    displayfood.add(new MenuDaily2(foodmenu.get(i).getId(),
                             foodmenu.get(i).getName_food(), foodmenu.get(i).getImg(),
                             foodmenu.get(i).getPrice_final()));
                 }
@@ -249,10 +249,10 @@ public class HomeDAO extends DBContext {
     public static void main(String[] args) {
         HomeDAO c = new HomeDAO();
 
-        List<MenuDaily> list1 = c.getFoodMenu();
-        List<MenuDaily> list2 = c.getFoodCheap(list1);
-        List<MenuDaily> list3 = c.getFoodSale(list1);
-        List<MenuDaily> list = c.setDisplay(list2, 1, 1);
+        List<MenuDaily2> list1 = c.getFoodMenu();
+        List<MenuDaily2> list2 = c.getFoodCheap(list1);
+        List<MenuDaily2> list3 = c.getFoodSale(list1);
+        List<MenuDaily2> list = c.setDisplay(list2, 1, 1);
         //System.out.println(" gia trung binh la " + c.getPriceNeeded(list1));
 //        for (int i = 0; i < list.size(); i++) {
 //            System.out.println(" id = " + list.get(i).getId() + " name = " + list.get(i).getName_food() + " img = " + list.get(i).getImg() + " dis = " + list.get(i).getDiscout());

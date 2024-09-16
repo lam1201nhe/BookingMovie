@@ -1,10 +1,10 @@
+package controller;
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller;
-
-import dal.LoginDAO;
+import dal.MenuDailyDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,17 +12,16 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import model.Account;
+import java.util.List;
+import model.MenuDaily;
+import model.MenuDaily;
 
 /**
- * Lớp gọi hàm và đưa dữ liệu lên trang
  *
- * @Phiên Bản : 1.0 04/06/2023
- * @Tác giả: Nguyễn Văn Thịnh
+ * @author msi
  */
-@WebServlet(name = "Login", urlPatterns = {"/login"})
-public class Login extends HttpServlet {
+@WebServlet(name = "MenuServlet", urlPatterns = {"/menu"})
+public class MenuDisplay extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -36,15 +35,15 @@ public class Login extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        try ( PrintWriter out = response.getWriter()) {
+        try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Login</title>");
+            out.println("<title>Servlet HomeDisplay</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet Login at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet HomeDisplay at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -62,9 +61,47 @@ public class Login extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("login.jsp").forward(request, response);
 
-        //processRequest(request, response);
+        MenuDailyDAO menu = new MenuDailyDAO();
+
+        String selectedCategory = request.getParameter("category");
+        String selectedPrice = request.getParameter("order");
+
+        int itemsPerPage = 6; 
+        int currentPage = 1; 
+// Kiểm tra và lấy giá trị trang hiện tại từ tham số truyền vào (nếu có)
+        String currentPageParam = request.getParameter("page");
+        if (currentPageParam != null) {
+            currentPage = Integer.parseInt(currentPageParam);
+        }
+
+        List<MenuDaily> foodmenu;
+
+        if (selectedCategory != null && (selectedCategory.equals("1") || selectedCategory.equals("2") || selectedCategory.equals("3"))) {
+            foodmenu = menu.getFoodCategogy(selectedCategory);
+        } else if (selectedPrice != null && (selectedPrice.equals("1") || selectedPrice.equals("2") || selectedPrice.equals("3") || selectedPrice.equals("4") || selectedPrice.equals("5") || selectedPrice.equals("6"))) {
+            foodmenu = menu.getFoodPrice(selectedPrice);
+        } else {
+            foodmenu = menu.getFoodMenu();
+        }
+
+// Tính toán chỉ số bắt đầu và chỉ số kết thúc của bản ghi trên trang hiện tại8
+        int startIndex = (currentPage - 1) * itemsPerPage;
+        
+        int endIndex = Math.min(startIndex + itemsPerPage, foodmenu.size());//itemsPerPage;
+
+// Trích xuất danh sách bản ghi trên trang hiện tại
+        List<MenuDaily> currentFoodMenu = foodmenu.subList(startIndex, endIndex);
+
+        int totalItems = foodmenu.size(); // Tổng số bản ghi
+        int totalPages = (int) Math.ceil((double) totalItems / itemsPerPage); // Tính toán số lượng trang
+
+
+        request.setAttribute("totalPages", totalPages);
+        request.setAttribute("currentPage", currentPage);
+        //gán giá trị foodmenu cho subList bên jsp
+        request.setAttribute("foodmenu", currentFoodMenu);
+        request.getRequestDispatcher("menu.jsp").forward(request, response);
     }
 
     /**
@@ -78,31 +115,7 @@ public class Login extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String u = request.getParameter("user");
-        String p = request.getParameter("pass");
-
-        LoginDAO obj = new LoginDAO();
-
-        Account a = obj.getCheckAcc(u, p); // Kiểm tra có tài khoản ko
-
-        HttpSession session = request.getSession();
-
-        if (a == null) { // Nếu không có tài khoản trả về null
-            request.setAttribute("error", "Not invalid");
-            request.getRequestDispatcher("login.jsp").forward(request, response);
-        } else { // Nếu tài khoản tồn tại thì bắn về trang home
-
-            if (a.getRole_name().equalsIgnoreCase("admin")) {
-                response.sendRedirect("new");
-            } else if (a.getRole_name().equalsIgnoreCase("delivery")) {
-                response.sendRedirect("new");
-            } else if (a.getRole_name().equalsIgnoreCase("manager")) {
-                response.sendRedirect("new");
-            } else if (a.getRole_name().equalsIgnoreCase("customer")) {
-                session.setAttribute("account", a);
-                response.sendRedirect("home");
-            }
-        }
+        processRequest(request, response);
     }
 
     /**

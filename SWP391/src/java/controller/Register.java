@@ -82,7 +82,7 @@ public class Register extends HttpServlet {
         String p = request.getParameter("pass");
         String r = request.getParameter("repeat");
 
-        String u2 = "", p2 = "", u3, p3;
+        String u2 = "", p2 = "";
 
         LoginDAO obj = new LoginDAO();
         HomeDAO obj2 = new HomeDAO();

@@ -100,6 +100,7 @@
             <c:set var="account" value="${sessionScope.account}"/>
 
             <h2>${account.username}</h2>
+            
             <c:if test="${type==2}">
                 <div id="wp-products">
                     <h2>${requestScope.error}</h2>

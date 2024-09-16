@@ -4,7 +4,7 @@
  */
 package controller;
 
-import dal.LoginDAO;
+import dal.DetailDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,17 +12,16 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
-import model.Account;
+import java.util.List;
+import model.FoodDetail;
+import model.MenuDaily;
 
 /**
- * Lớp gọi hàm và đưa dữ liệu lên trang
  *
- * @Phiên Bản : 1.0 04/06/2023
- * @Tác giả: Nguyễn Văn Thịnh
+ * @author msi
  */
-@WebServlet(name = "Login", urlPatterns = {"/login"})
-public class Login extends HttpServlet {
+@WebServlet(name = "ShowDetail", urlPatterns = {"/detail"})
+public class ShowDetail extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,10 +40,10 @@ public class Login extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Login</title>");
+            out.println("<title>Servlet ShowDetail</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet Login at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet ShowDetail at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -62,9 +61,35 @@ public class Login extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("login.jsp").forward(request, response);
 
-        //processRequest(request, response);
+        String n = request.getParameter("num");
+
+        int num = 0;
+        int rate;
+        
+        try {
+            num = Integer.parseInt(n);
+
+        } catch (Exception e) {
+            System.out.println("Bi Loi");
+        }
+        
+        DetailDAO obj = new DetailDAO();
+
+        List<FoodDetail> list = obj.getDetailFood(num);
+
+        List<MenuDaily> list1 = obj.DetailId(num);
+        
+        rate = obj.getAvg(num);
+        
+        request.setAttribute("commentfood", list);
+
+        request.setAttribute("infofood", list1);
+        
+        request.setAttribute("rate", rate);
+
+        request.getRequestDispatcher("fooddetail.jsp").forward(request, response);
+
     }
 
     /**
@@ -78,31 +103,7 @@ public class Login extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String u = request.getParameter("user");
-        String p = request.getParameter("pass");
-
-        LoginDAO obj = new LoginDAO();
-
-        Account a = obj.getCheckAcc(u, p); // Kiểm tra có tài khoản ko
-
-        HttpSession session = request.getSession();
-
-        if (a == null) { // Nếu không có tài khoản trả về null
-            request.setAttribute("error", "Not invalid");
-            request.getRequestDispatcher("login.jsp").forward(request, response);
-        } else { // Nếu tài khoản tồn tại thì bắn về trang home
-
-            if (a.getRole_name().equalsIgnoreCase("admin")) {
-                response.sendRedirect("new");
-            } else if (a.getRole_name().equalsIgnoreCase("delivery")) {
-                response.sendRedirect("new");
-            } else if (a.getRole_name().equalsIgnoreCase("manager")) {
-                response.sendRedirect("new");
-            } else if (a.getRole_name().equalsIgnoreCase("customer")) {
-                session.setAttribute("account", a);
-                response.sendRedirect("home");
-            }
-        }
+        processRequest(request, response);
     }
 
     /**

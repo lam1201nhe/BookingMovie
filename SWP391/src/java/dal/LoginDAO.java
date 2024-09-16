@@ -213,15 +213,22 @@ public class LoginDAO extends DBContext {
 
     public static void main(String[] args) {
 
-        LoginDAO c = new LoginDAO();
+//        LoginDAO c = new LoginDAO();
+//
+//        //   System.out.println(c.getUpdatePass("lmhsdf", "123456789"));
+//        System.err.println(c.getCheckUser("minhtan"));
+//
+//        System.out.println(c.getCountAcc());
+//
+//        Account b = new Account((c.getCountAcc() + 1), "minhtanav", "12345678", "customer");
+//        c.getCreateAcc(b);
 
-        //   System.out.println(c.getUpdatePass("lmhsdf", "123456789"));
-        System.err.println(c.getCheckUser("minhtan"));
 
-        System.out.println(c.getCountAcc());
+        LoginDAO obj = new LoginDAO();
 
-        Account b = new Account((c.getCountAcc() + 1), "minhtanav", "12345678", "customer");
-        c.getCreateAcc(b);
+        Account a = obj.getCheckAcc("minhtanav", "123456789"); // Kiểm tra có tài khoản ko
+        
+        System.out.println(a.getUsername());
 
     }
 

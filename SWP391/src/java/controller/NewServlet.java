@@ -4,7 +4,6 @@
  */
 package controller;
 
-import dal.LoginDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -16,13 +15,11 @@ import jakarta.servlet.http.HttpSession;
 import model.Account;
 
 /**
- * Lớp gọi hàm và đưa dữ liệu lên trang
  *
- * @Phiên Bản : 1.0 04/06/2023
- * @Tác giả: Nguyễn Văn Thịnh
+ * @author msi
  */
-@WebServlet(name = "Login", urlPatterns = {"/login"})
-public class Login extends HttpServlet {
+@WebServlet(name = "NewServlet", urlPatterns = {"/new"})
+public class NewServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -41,10 +38,10 @@ public class Login extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Login</title>");
+            out.println("<title>Servlet NewServlet</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet Login at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet NewServlet at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -62,9 +59,22 @@ public class Login extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        request.getRequestDispatcher("login.jsp").forward(request, response);
+////        processRequest(request, response);
+//        HttpSession session = request.getSession();
+//        
+////        Account user = (Account) session.getAttribute("account");
+//        
+//        
+//        
+//        
+////        request.setAttribute("account", user.getUsername);
+//
+//
+//        String a = (String) session.getAttribute("account");
+//        
+//        request.setAttribute("mmm", a);
 
-        //processRequest(request, response);
+        request.getRequestDispatcher("newjsp.jsp").forward(request, response);
     }
 
     /**
@@ -78,31 +88,7 @@ public class Login extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String u = request.getParameter("user");
-        String p = request.getParameter("pass");
-
-        LoginDAO obj = new LoginDAO();
-
-        Account a = obj.getCheckAcc(u, p); // Kiểm tra có tài khoản ko
-
-        HttpSession session = request.getSession();
-
-        if (a == null) { // Nếu không có tài khoản trả về null
-            request.setAttribute("error", "Not invalid");
-            request.getRequestDispatcher("login.jsp").forward(request, response);
-        } else { // Nếu tài khoản tồn tại thì bắn về trang home
-
-            if (a.getRole_name().equalsIgnoreCase("admin")) {
-                response.sendRedirect("new");
-            } else if (a.getRole_name().equalsIgnoreCase("delivery")) {
-                response.sendRedirect("new");
-            } else if (a.getRole_name().equalsIgnoreCase("manager")) {
-                response.sendRedirect("new");
-            } else if (a.getRole_name().equalsIgnoreCase("customer")) {
-                session.setAttribute("account", a);
-                response.sendRedirect("home");
-            }
-        }
+        processRequest(request, response);
     }
 
     /**

@@ -61,10 +61,10 @@
                         </form>
                     </div>
                     <div class="item">
-                        <i class="fa-solid fa-user"></i>
+                        <a href="login"><i class="fa-solid fa-user"></i></a>
                     </div>
                     <div class="item">
-                        <i class="fa-solid fa-cart-shopping"></i>
+                        <a href="cart.html"><i class="fa-solid fa-cart-shopping"></i></a>
                     </div>
                 </div>
             </div>
@@ -97,9 +97,9 @@
             <c:set var="num1" value="${requestScope.num1}"/>
             <c:set var="num2" value="${requestScope.num2}"/>
             <c:set var="type" value="${requestScope.type}"/>
+            <c:set var="account" value="${sessionScope.account}"/>
 
-
-
+            <h2>${account.username}</h2>
             <c:if test="${type==2}">
                 <div id="wp-products">
                     <h2>${requestScope.error}</h2>
@@ -126,7 +126,7 @@
                                 <a href="detail?num=${c.id}">
                                     <div class="name">${c.name_food}</div>
                                 </a>
-                                <div class="price">Giảm giá lên đến: ${c.discout*100} %</div>
+                                <div class="price">Giảm giá lên đến: ${c.price_final} %</div>
                             </div>
                         </c:forEach>
                 </div>
@@ -216,6 +216,7 @@
                                     </p>
                                 </div>
                             </li>
+                            
                             <li class="item">
                                 <div class="avatar">
                                     <img src="./images/avatar_1.png" alt="" />
@@ -304,7 +305,7 @@
                     <h3>NỘI DUNG</h3>
                     <ul class="quick-menu">
                         <div class="item">
-                            <a href="">Trang chủ</a>
+                            <a href="home">Trang chủ</a>
                         </div>
                         <div class="item">
                             <a href="">Sản phẩm</a>
